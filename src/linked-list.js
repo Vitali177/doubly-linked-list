@@ -3,9 +3,11 @@ const Node = require('./node');
 class LinkedList {
     constructor() {
 
+        this._head = new Node();
+        this._tail = this._head;
         this.length = 0;
-        this._head = null;
-        this._tail = null;        
+        //this._head = null;
+        //this._tail = null;        
     }
 
     append(data) {        
@@ -16,18 +18,18 @@ class LinkedList {
 
             this._tail.next = node;
             node.prev = this._tail;
-            this._tail = node;    
-
-                         
+            this._tail = node;   
+                                     
         } else {
             this._head = node;
             this._tail = node;
         }     
-        this.length++;          
+        this.length++;   
+        
+        return this;
     }
 
     head() {     
-
         return this._head.data;
     }
 
@@ -45,6 +47,11 @@ class LinkedList {
 
     insertAt(index, data) {
 
+        if (!(this.length)) {
+            this.append(new Node(data));
+            return this;
+        }
+
         var findNode = this._head;
 
         for (var i = 0; i < index; i++) {
@@ -59,36 +66,60 @@ class LinkedList {
         node.next = findNode;
         findNode.prev = node;
 
+        this.length++;
+
+        return this;
     }
 
     isEmpty() {
         if (this.length === 0)
             return true;
-        return false;
+        return false;        
     }
 
     clear() {
         
         this._head.data = null;
         this._tail.data = null;
- 
         this.length = 0;
-       
+
+        return this;
     }
 
     deleteAt(index) {
-       var findNode = this._head;
 
-        for (var i = 0; i < index; i++) {
-            findNode = findNode.next;
-        }
-
-        var findNodePrev = findNode.prev;
-        var findNodeNext = findNode.next;
-
-        findNodePrev.next = findNodeNext;
-        findNodeNext.prev = findNodePrev;
+        var findNode = this._head;
         
+        if (index === 0) {
+
+           if (findNode.next !== null) {
+
+                findNode = this._head.next;
+                findNode.prev = null;
+                this._head = findNode;
+            }
+        } else if (index === this.length - 1) {
+
+            if (findNode.prev !== null) {
+
+                findNode = this._tail.prev;
+                findNode.next = null;
+                this._tail = findNode;
+            }
+        } else {
+            
+            for (var i = 0; i < index; i++)
+                findNode = findNode.next;
+            
+            findNode.data = 0;
+            var findNodePrev = findNode.prev;
+            var findNodeNext = findNode.next;
+
+            findNodePrev.next = findNodeNext;
+            findNodeNext.prev = findNodePrev;
+        }
+        this.length--;
+        return this;
     }
 
     reverse() {
